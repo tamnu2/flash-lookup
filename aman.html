@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Lookup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { text-align: center; font-family: sans-serif; }
+    input, div, button { margin: 10px; padding: 10px; font-size: 16px; width: 80%; max-width: 300px; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <h1>Simple Lookup</h1>
+
+  <input type="text" id="lookupInput" placeholder="Enter Code or Item">
+  <button onclick="lookup()">Lookup</button>
+  <div id="result"></div>
+
+  <script>
+    const sheetURL = "https://df2c-2401-4900-a00f-5ccf-f8-a14b-ab0b-83bb.ngrok-free.app/sheet-data";
+
+    function lookup() {
+      console.log("lookup() function called");
+
+      const input = document.getElementById("lookupInput").value;
+      const output = document.getElementById("result");
+
+      fetch(sheetURL)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(text => {
+          const data = text.split("\n").slice(1).map(row => row.split(",")); // Slice to remove header
+
+          let found = "Not Found";
+          for (let row of data) {
+            if (row[0] === input) {
+              found = row[1];
+              break;
+            }
+          }
+
+          output.textContent = found;
+        })
+        .catch(error => {
+          console.error('There has been a problem with your fetch operation:', error);
+        });
+    }
+  </script>
+</body>
+</html>
